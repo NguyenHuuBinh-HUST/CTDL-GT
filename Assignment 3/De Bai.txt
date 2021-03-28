@@ -1,0 +1,5 @@
+Cài đặt hàng một số biến thể của hàng đợi bằng CTTL tuần tự:
+
+Hàng đợi hai đầu (Double-ended Queue)
+Hàng đợi vòng (Circular Queue)
+Hàng đợi ưu tiên (Priority Queue)
