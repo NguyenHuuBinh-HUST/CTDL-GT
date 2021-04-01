@@ -1,0 +1,3 @@
+Cài đặt Stack và Queue bằng DS móc nối đơn với các thao tác khởi tạo, bổ sung, loại bỏ. Viết chương trình chính sử dụng Stack và Queue đó.
+
+Cài đặt Stack và Queue bằng DS móc nối kép với các thao tác khởi tạo, bổ sung, loại bỏ. Viết chương trình chính sử dụng Stack và Queue đó.
