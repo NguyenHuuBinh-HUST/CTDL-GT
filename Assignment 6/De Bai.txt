@@ -1,0 +1,10 @@
+
+1. Cài đặt một danh sách móc nối kép với các thao tác đã học, mỗi node trong danh sách chỉ chứa một dữ liệu thuộc kiểu int.
+Viết chương trình chính minh họa cách sử dụng danh sách móc nối kép đó
+2. Cài đặt một danh sách các môn học, mỗi môn học gồm các thông tin: mã môn, tên môn, số tín chỉ.
+Danh sách luôn được sắp xếp theo thứ tự tăng dần của số tín chỉ. 
+  
+  Yêu cầu:
+
+-Sử dụng cấu trúc lưu trữ móc nối đơn để cài đặt danh sách
+-Cài đặt các thao tác: khởi tạo, bổ sung 1 môn, loại bỏ một môn có mã môn cho trước, in ra nội dung của DS.
