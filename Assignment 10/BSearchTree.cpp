@@ -34,7 +34,7 @@ void DelNode (PNode & P) { //X�a gi� tri o n�t P & sap xep lai c�y
 		Q = P;
 		P = P->RP;
 		delete Q; return;
-	} else if (P->RP = NULL) //X�a n�t chi c� c�y con tr�i
+	} else if (P->RP == NULL) //X�a n�t chi c� c�y con tr�i
 	{
 		Q = P;
 		P = P->LP;
