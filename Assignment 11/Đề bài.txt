@@ -1,0 +1,11 @@
+Xây dựng cây nhị phân tìm kiếm để lưu trữ các sinh viên theo thứ tự của mã số sinh viên. Thông tin của sinh viên bao gồm: mã số sinh viên (int), họ tên (string), lớp (string), điểm trung bình (float). Hãy thực hiện các thao tác (hàm) sau:
+
+Khởi tạo cây rỗng
+Bổ sung một sinh viên vào cây
+Loại bỏ một sinh viên khỏi cây theo mã số sinh viên
+Tìm kiếm sinh viên theo mã số
+Tìm kiếm sinh viên theo tên
+Sắp xếp sinh viên theo chiều tăng dần của mã số sinh viên
+Đưa ra thông tin của sinh viên có điểm trung bình cao nhất
+tính điểm trung bình của toàn bộ sinh viên
+Hiển thị thông tin của tất cả sinh viên
