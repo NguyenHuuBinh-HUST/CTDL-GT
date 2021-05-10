@@ -1,472 +1,168 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <string>
 #include <iostream>
-
+#include <iomanip>
 using namespace std;
-struct sinhvien {
-	int Masv;
-	string Ten[100];
-	string lop[100];
-	float DiemTB;
+
+struct SV {
+    int mssv;
+    string name, Class;
+    float avgP;
+    SV* LP, * RP;
 };
-//
-struct Node {
-	sinhvien key; //truong key cua du lieu
-	Node *Left, *Right; //con trai va con phai
-};
-typedef Node *Tree;  //cay
 
-int compare(sinhvien x, sinhvien y)
-{
-	return strcmp(x.Masv, y.Masv);
+typedef SV* PNode;
+typedef PNode BinaryTree;
+typedef BinaryTree BSearchTree;
+
+//khoi tao cay rong
+void InitBST(BSearchTree& Root) {
+    
+    Root = NULL;
 }
-//
-// nhap 1 item
-sinhvien Nhapsv()
-{
-	sinhvien x;
-	cout << "Nhap Ma Sinh Vien";
-	gets_s(x.Masv);
-	cout << "Nhap Ten Sinh Vien: ";
-	gets_s(x.Ten);
-    cout<<"Nhap Lop:";
-    gets_s(x.lop);
-	cout << "Nhap Diem Trung Binh: ";
-	while (true)
-	{
-		cin >> x.DiemTB;
-		if (cin.fail() || x.DiemTB>10||x.DiemTB<0)
-		{
-			cin.clear();
-			_flushall();
-			cin.ignore();
-			cout << "Nhap Lai Diem Trung Binh: ";
 
-		}
-		else
-			break;
-	}
-	while (getchar() != '\n');/////////////////
-	return x;
+//bo sung sinh vien va sap xep theo chieu tang dan cua mssv
+void InsertT(BSearchTree& Root, int _mssv, string _name, string _Class, float _avgP) {
+    PNode Q;
+    if (Root == NULL) { //khi cay rong
+        Q = new SV; //tao ra dinh moi
+        Q->mssv = _mssv; Q->name = _name; Q->Class = _Class; Q->avgP = _avgP;
+        Q->LP = Q->RP = NULL;
+        Root = Q;
+    }
+    else {
+        if (_mssv < Root->mssv) InsertT(Root->LP, _mssv, _name, _Class, _avgP);
+        else if (_mssv > Root->mssv) InsertT(Root->RP, _mssv, _name, _Class, _avgP);
+    }
 }
-void XuatSinhVien(sinhvien x)
-{
-	cout << "=================================" << endl;
-	cout << "Ma So Sinh Vien: " << x.Masv << "\n";
-	cout << "Ten Sinh Vien: " << x.Ten << "\n";
-	cout << "Diem Toan: " << x.Toan << "\n";
-	cout << "Diem Ly: " << x.Ly << "\n";
-	cout << "Diem Hoa: " << x.Hoa << "\n";
+
+void DelNode(PNode& P) { //xoa gia tri o nut P & sap lai cay
+    PNode Q, R;
+    if (P->LP == NULL) { //xoa nut chi co cay con phai
+        Q = P;
+        P = P->RP;
+    }
+    else if (P->RP == NULL) //xoa nut chi co cay con trai
+    {
+        Q = P;
+        P = P->LP;
+    }
+    else { //xoa nut co 2 cay con
+        Q = P->LP;
+        if (Q->RP == NULL) {
+            P->mssv = Q->mssv;
+            P->name = Q->name;
+            P->Class = Q->Class;
+            P->avgP = Q->avgP;
+            P->LP = Q->LP;
+        }
+        else {
+            do { //dung R de luu parent cua Q
+                R = Q;
+                Q = Q->RP;
+            } while (Q->RP != NULL);
+            P->mssv = Q->mssv; //lay gia tri o Q dua len
+            P->name = Q->name;
+            P->Class = Q->Class;
+            P->avgP = Q->avgP;
+            R->RP = Q->LP; //chuyen con cua Q len vi tri Q
+        }
+    }
+    delete Q; //xoa Q
 }
-int insertNode(Tree &T, sinhvien x) // chen 1 Node vao cay
-{
-	if (T != NULL) {
-		if (compare(T->key, x) == 0)
-			return -1;  // Node nay da co
-		if (compare(T->key, x) > 0)
-			return insertNode(T->Left, x); // chen vao Node trai
-		else if (compare(T->key, x) < 0)
-			return insertNode(T->Right, x);   // chen vao Node phai
-	}
-	T = (Node *)malloc(sizeof(Node));
-	if (T == NULL)
-		return 0;    // khong du bo nho
-	T->key = x;
-	T->Left = T->Right = NULL;
-	return 1;   // ok
+
+//loai bo sinh vien khoi cay theo mssv
+void DeleteT(BSearchTree& Root, int _mssv) {
+    if (Root != NULL) {
+        if (_mssv < Root->mssv) DeleteT(Root->LP, _mssv);
+        else if (_mssv > Root->mssv) DeleteT(Root->RP, _mssv);
+        else DelNode(Root); //Xoa goc cua cay
+    }
 }
-void CreateTree(Tree &T)        // nhap cay
-{
-	sinhvien x;
-	while (1) {
-		cout << "--Nhap Thong Tin Sinh Vien Can Them--" << endl << endl;
-		x = Nhapsv();
-		if (strcmp(x.Masv, "q") == 0 || strcmp(x.Masv, "Q") == 0)
-			break;  // x = 0 thi thoat
-		int check = insertNode(T, x);
-		if (check == -1)
-			cout << "---Ma Sinh Vien Da Co---\n" << endl;
-		else if (check == 0)
-			cout << "---Bo Nho Day---\n" << endl;
-		else cout << "---Them Thanh Cong---\n\n";
 
-	}
+void show(BSearchTree& Root)
+{
+    PNode P = Root;
+    cout << P->mssv << setw(20) << P->name << setw(10) << P->Class << setw(10) << P->avgP << endl;
 }
-void LNR(Tree T)
-{
 
-	if (T != NULL)
-	{
-		LNR(T->Left);
-		XuatSinhVien(T->key);
-		LNR(T->Right);
-	}
+//tinh diem trung binh cua toan bo sinh vien
+float DiemTB(BSearchTree Root)
+{
+    PNode p = Root;
+    static float total = 0;
+    static float num = 0;
+    if (Root == NULL) return NULL;
+    total = total + p->avgP;
+    num++;
+    DiemTB(p->LP);
+    DiemTB(p->RP);
+    return (total / num);
 }
-Tree searchSV(Tree T, char Masv[])     // tim nut co diem < 4
-{
-	Node *P = T;
-	if (T != NULL)
-	{
-		if (strcmp(T->key.Masv, Masv) == 0)
-		{
-			return P;
 
-		}
-		else if (strcmp(T->key.Masv, Masv) > 0)
-		{
-			return searchSV(T->Left, Masv);
-		}
-		else
-			return searchSV(T->Right, Masv);
-	}
-	else
-		return NULL;
+//tim sinh vien theo mssv
+PNode Find_sv_using_mssv(BSearchTree Root, int _mssv) {
+    if (Root == NULL) return NULL;
+    if (_mssv == Root->mssv) return Root;
+    else if (_mssv < Root->mssv) return Find_sv_using_mssv(Root->LP, _mssv);
+    else return Find_sv_using_mssv(Root->RP, _mssv);
 }
-Tree Suasv(Tree P)
-{
 
-	cout << "Sua Ten Sinh Vien(Q De Quay Lai): ";
-	gets_s(P->key.Ten);
-	if (strcmp(P->key.Ten, "q") == 0 || strcmp(P->key.Ten, "Q") == 0)
-	{
-		return P;
-	}
-	cout << "Sua Diem Toan: ";
-	while (true)
-	{
-		cin >> P->key.Toan;
-		if (cin.fail() || P->key.Toan>10|| P->key.Toan<0)
-		{
-			cin.clear();
-			_flushall();
-			cin.ignore();
-			cout << "Nhap Lai Diem Toan: ";
-
-		}
-		else
-			break;
-	}
-	cout << "Sua Diem Ly: ";
-	while (true)
-	{
-		cin >> P->key.Ly;
-		if (cin.fail() || P->key.Ly>10|| P->key.Ly<0)
-		{
-			cin.clear();
-			_flushall();
-			cin.ignore();
-			cout << "Nhap Lai Diem Ly: ";
-
-		}
-		else
-			break;
-	}
-	cout << "Sua Diem Hoa: ";
-	while (true)
-	{
-		cin >> P->key.Hoa;
-		if (cin.fail() || P->key.Hoa>10|| P->key.Hoa<0)
-		{
-			cin.clear();
-			_flushall();
-			cin.ignore();
-			cout << "Nhap Lai Diem Hoa: ";
-
-		}
-		else
-			break;
-	}
-
-	while (getchar() != '\n');/////////////////
-
-	return P;
+//tim sinh vien theo ten
+void Find_sv_using_name(BSearchTree Root, string _name) {
+    if (Root == NULL) return;
+    if (_name == Root->name) show(Root);
+    Find_sv_using_name(Root->LP, _name);
+    Find_sv_using_name(Root->RP, _name);
 }
-//X�a Sinh Vi�n
-int delSV(Tree &T, char Masv[])     // xoa nut co key Masv
-{
-	if (T == NULL)
-		return 0;
-	else if (strcmp(T->key.Masv, Masv) > 0)
-		return delSV(T->Left, Masv);
-	else if (strcmp(T->key.Masv, Masv) < 0)
-		return delSV(T->Right, Masv);
-	else // T->key == x
-	{
-		Node *P = T;
-		if (T->Left == NULL)
-			T = T->Right;    // Node chi co cay con phai
-		else if (T->Right == NULL)
-			T = T->Left;   // Node chi co cay con trai
-		else // Node co ca 2 con
-		{
-			Node *S = T, *Q = S->Left;
-			// S la cha cua Q, Q la Node phai nhat cua cay con trai cua P
-			while (Q->Right != NULL) {
-				S = Q;
-				Q = Q->Right;
-			}
-			P->key = Q->key;
-			S->Right = Q->Left;
-			delete Q;
-		}
-	}
-	return 1;
-}
-void  ghifile(char *filename, Tree &T)
-{
-	if (T != NULL)
-	{
-		
-		FILE *f = fopen(filename, "ab");
-		fprintf(f, "%s\n", T->key.Masv);
-		//fwrite(T->key.Masv, 1, sizeof(T->key.Masv), f);
-		fprintf(f, "%s\n", T->key.Ten);
-		//fwrite(T->key.Masv, 1, sizeof(T->key.Masv), f);
-		fprintf(f, "%f\n", T->key.Toan);
-		fprintf(f, "%f\n", T->key.Ly);
-		fprintf(f, "%f\n", T->key.Hoa);	
-		ghifile(filename, T->Left);
-		ghifile(filename, T->Right);
-		fclose(f);
-	}
-}
-void docfile(char *filename, Tree &T)
-{
-	sinhvien x;
-	FILE *f = fopen(filename, "rb");
-	if (f != NULL)
-	{
 
-		while (!feof(f))
-		{
-			fscanf(f, "%s\n", &x.Masv);
-			fscanf(f, "%s\n", &x.Ten);
-			char to[100];
-			fgets(to, 100, f);
-			x.Toan = atof(to);
-			char l[100];
-			fgets(l, 100, f);
-			x.Ly = atof(l);
-			char h[100];
-			fgets(h, 100, f);
-			x.Hoa = atof(h);
-			insertNode(T, x);
-		}
-		fclose(f);
-	}
-	else
-	{
-		cout << "!!--Thong Bao: Danh Sach Sinh Vien Dang Rong, Xin Vui Long Nhap Sinh Vien--!!" << "\n\n";
-		CreateTree(T); //Nhap cay
-	}
-	
-}
-void main()
+
+float Find_max_avgP(BSearchTree Root)
 {
-	Tree T;
-	T = NULL; //Tao cay rong
-	cout << "------------ Chuong Trinh Quan Ly Sinh Vien Bang Cay Nhi Phan ------------" << "\n\n\n";
-	char *f = "QLSV.TXT";
-	docfile(f, T);
-	// Tao Menu
-	int flag;
-Menu: {
-	system("cls");
-	HANDLE hOut;
-	cout << "----------Menu Chinh----------" << endl;
-	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (Root == NULL) return NULL;
+    static float max = 0;
+    if (max < Root->avgP) max = Root->avgP;
+    Find_max_avgP(Root->LP);
+    Find_max_avgP(Root->RP);
+    return max;
+}
 
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED);
-	cout << "1. Xem Danh Sach Sinh Vien" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED |
-		FOREGROUND_GREEN);
-	cout << "2. Them Sinh Vien" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED);
-	cout << "3. Tim Sinh Vien Theo Ma Sinh Vien" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED |
-		FOREGROUND_GREEN);
-	cout << "4. Xoa Sinh Vien Theo Ma Sinh Vien" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED);
-	cout << "5. Luu Du Lieu" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED |
-		FOREGROUND_GREEN);
-	cout << "6. Thoat Chuong Trinh" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_GREEN);
-	cout << "----------------------------------------------------" << endl;
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_BLUE |
-		FOREGROUND_RED);
-	cout << "Nhap So De Thao Tac: ";
-	SetConsoleTextAttribute(hOut,
-		FOREGROUND_RED |
-		FOREGROUND_GREEN |
-		FOREGROUND_BLUE);
-	cin >> flag;
-	}
-	  if (flag == 1)
-	  {
-		  system("cls");
-		  int f;
-		  LNR(T);
-		  cout << "----------------------------------------------------" << endl;
-		  cout << "1. Quay lai Menu Chinh: ";
-		  cin >> f;
-		  if (f == 1)
-			  goto Menu;
-	  }
-	  // them sinh vien
-	  if (flag == 2)
-	  {
-		  system("cls");
-		  cin.ignore();
-		  CreateTree(T);
-		  goto Menu;
-	  }
-	  if (flag == 3)
-	  {
-		  system("cls");
-		  char Masv[50];
-		  cin.ignore();
-		  cout << "Nhap Ma Sinh Vien Can Tim: ";
-		  gets_s(Masv);
-		  Tree P = searchSV(T, Masv);
-		  if (P != NULL)
-		  {
-			  int flag;
-		  Menu2: {
-			  system("cls");
-			  cout << "----------Tim Thay Sinh Vien " << Masv << "----------" << endl;
-			  cout << "1. Hien Thi Thong Tin Sinh Vien " << Masv << endl;
-			  cout << "2. Sua Thong Tin Sinh Vien " << Masv << endl;
-			  cout << "3. Quay lai Menu Chinh" << endl;
-			  cout << "----------------------------------------------------" << endl;
-			  cout << "Nhap So De Thao Tac: ";
-			  cin >> flag;
-			  }
-				 if (flag == 1)
-				 {
-					 system("cls");
-					 int f;
-					 cout << "=================================" << endl;
-					 cout << "Ma So Sinh Vien: " << P->key.Masv << "\n";
-					 cout << "Ten Sinh Vien: " << P->key.Ten << "\n";
-					 cout << "Diem Toan: " << P->key.Toan << "\n";
-					 cout << "Diem Ly: " << P->key.Ly << "\n";
-					 cout << "Diem Hoa: " << P->key.Hoa << "\n";
-					 double TB = 0;
-					 TB = (P->key.Toan + P->key.Ly + P->key.Hoa) / 3;
-					 cout << "Diem Trung Binh: " << TB << endl;
-					 cout << "----------------------------------------------------" << endl;
-					 cout << "1. Quay lai Menu Sinh Vien " << Masv << " : ";
-					 cin >> f;
-					 if (f == 1)
-						 goto Menu;
-					 goto Menu2;
-				 }
-				 if (flag == 2)
-				 {
-					 system("cls");
-					 cout << "Nhap Thong Tin Can Sua" << endl;
-					 cin.ignore();
-					 Suasv(P);
-					 goto Menu2;
-				 }
-				 if (flag == 3)
-				 {
-					 system("cls");
-					 goto Menu;
-				 }
-		  }
-		  else
-		  {
-			  cout << "Khong Ton Tai Ma Sinh Vien Nay" << endl;
-			  system("Pause");
-		  }
-		  goto Menu;
-	  }
-	  if (flag == 4)
-	  {
-		  system("cls");
-		  char Masv[50];
-		  cin.ignore();
-		  cout << "Nhap Ma Sinh Vien Can Xoa: ";
-		  gets_s(Masv);
-		  Tree P = searchSV(T, Masv);
-		  if (P != NULL)
-		  {
-			  int flag;
-			  system("cls");
-			  cout << "----------Tim Thay Sinh Vien " << Masv << "----------" << endl;
-			  cout << "Ma So Sinh Vien: " << P->key.Masv << "\n";
-			  cout << "Ten Sinh Vien: " << P->key.Ten << "\n";
-			  cout << "Diem Toan: " << P->key.Toan << "\n";
-			  cout << "Diem Ly: " << P->key.Ly << "\n";
-			  cout << "Diem Hoa: " << P->key.Hoa << "\n";
-			  double TB = 0;
-			  TB = (P->key.Toan + P->key.Ly + P->key.Hoa) / 3;
-			  cout << "Diem Trung Binh: " << TB << endl;
-			  cout << "----------------------------------------------------" << endl;
-			  cout << "1. Xoa Sinh Vien " << Masv << endl;
-			  cout << "2. Huy Bo! va Quay lai Menu Chinh" << endl;
-			  cout << "----------------------------------------------------" << endl;
-			  cout << "Nhap So De Thao Tac: ";
-			  cin >> flag;
-			  if (flag == 1)
-			  {
-				  system("cls");
-				  cin.ignore();
-				  int del = 1;
-				  while (del)
-				  {
-					  if (P != NULL)
-					  {
-						  cout << "---Xoa Thanh Cong---" << endl;
-						  del = delSV(T, P->key.Masv);
-					  }
-					  else
-					  {
-						  cout << "Khong Co Du Lieu" << endl;
-						  del = 0;
-					  }
-					  system("Pause");
-					  goto Menu;
-				  }
-			  }
-			  if (flag == 2)
-			  {
-				  system("cls");
-				  goto Menu;
-			  }
-		  }
-		  else
-		  {
-			  cout << "Khong Ton Tai Ma Sinh Vien Nay" << endl;
-		  }
-		  goto Menu;
-	  }
-	  if (flag == 5)
-	  {
-		  system("del QLSV.TXT");
-		  system("cls");
-		  cin.ignore();
-		  ghifile(f, T);
-		  cout << "Da Luu Du Lieu" << endl;
-		  system("Pause");
-		  goto Menu;
-	  }
-	  if (flag == 6)
-	  {
-		  return;
-	  }
+//tim sinh vien co diem trung binh cao nhat
+void Find_sv_using_maxAvgP(BSearchTree Root, float max)
+{
+    if (Root == NULL) {
+        return;
+    }
+    if (max == Root->avgP) show(Root);
+    Find_sv_using_maxAvgP(Root->LP, max);
+    Find_sv_using_maxAvgP(Root->RP, max);
+}
 
-	  system("Pause");
-} 
+//hien thi thong tin cua toan bo sinh vien
+void HienThiToanBoSV(BSearchTree Root) {
+    if (Root == NULL) return;
+    HienThiToanBoSV(Root->LP);
+    show(Root);
+    HienThiToanBoSV(Root->RP);
+}
+
+
+int main()
+{
+    BSearchTree T; int y; string b;
+    InitBST(T);
+    InsertT(T, 3, "Nguyen Huu Binh", "ET1-01", 8.0);
+    InsertT(T, 4, "Nguyen Van B", "ET1-02", 10.0);
+    InsertT(T, 2 , "Le Van An", "ET1-03", 9.0);
+    InsertT(T, 5, "Do Quang K", "ET1-05", 7.0);
+    InsertT(T, 1, "Dao Thi Y", "ET1-06", 7.5);
+    cout << "danh sach sinh vien: " << endl; HienThiToanBoSV(T);
+    cout << "\nnhap mssv ban muon xoa: "; cin >> y;
+    DeleteT(T, y);
+    cout << "sinh vien vua nhap da duoc xoa";
+    cout << "\ndanh sach sinh vien: " << endl; HienThiToanBoSV(T);
+    cout << "\ndiem trung binh cua toan bo sinh vien trong danh sach: "; cout << DiemTB(T) << endl;
+    cin.ignore();
+    cout << "nhap ten sinh vien muon tim info: "; getline(cin, b);
+    Find_sv_using_name(T, b);
+    cout << "\ninfo sinh vien co diem trung binh cao nhat: " << endl; Find_sv_using_maxAvgP(T, Find_max_avgP(T));
+    
+}
