@@ -1,0 +1,11 @@
+BT1.
+
+Thực hiện lại 6 giải thuật sắp xếp đã học.
+Viết chương trình chính sử dụng các giải thuật đó với đầu vào là một dãy các số nguyên.
+Hiển thị kết quả ra màn hình (dãy số sau khi sắp xếp)
+
+BT2. 
+    Một đơn vị quan tâm về dân số lập một bảng thống kê số lượng người sinh trong từng năm, kể từ năm 1920 (X) đến 1970 (Y) và lưu trữ bảng đó trong máy tính bằng một mảng một chiều N với N[k] (k=0->(Y-X) ) có giá trị bằng số người sinh ra tương ứng trong năm từ 1920 (X) đến 1970 (Y). Hãy viết giải thuật thực hiện
+In ra những năm không có người nào được sinh ra
+Tính số lượng những năm mà số người sinh ra không quá 10 (M)
+Tính số người đã trên 50 (T) tuổi tính đến năm 1985 (Z).
