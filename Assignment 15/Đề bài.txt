@@ -1,1 +1,9 @@
-
+2. Bổ sung thêm các yêu cầu sau cho bài cài đặt cây nhị phân tìm kiếm trong Assignment 10
+Viết hàm tạo một nút mới với khóa trên nút là value:
+Pnode makeTreeNode (int value)
+Thực hiện lại hàm bổ sung một nút mới vào cây nhị phân tìm kiếm trong đó có sử dụng hàm Pnode makeTreeNode (int value)
+Viết hàm tìm gía trị khóa nhỏ nhất trên cây
+Viết hàm tìm giá trị khóa lớn nhất trên cây
+Viết hàm tìm phần tử có khóa nhỏ nhất trên cây
+Viết hàm tìm phần tử có khóa lớn nhất trên cây
+Viết hàm đếm số lượng nút có khóa là số chẵn trên cây
